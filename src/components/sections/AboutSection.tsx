@@ -1,0 +1,100 @@
+import Image from "next/image";
+import type { SiteContent } from "@/content";
+import { containerClass, figma } from "@/config/figma-layout";
+import type { Locale } from "@/lib/i18n";
+import { getDirection, localeTextProps } from "@/lib/i18n";
+
+interface AboutSectionProps {
+  content: SiteContent;
+  locale: Locale;
+}
+
+export function AboutSection({ content, locale }: AboutSectionProps) {
+  const textProps = localeTextProps(locale);
+  const dir = getDirection(locale);
+
+  return (
+    <section id="about" className="bg-section-about">
+      {/* Mobile / tablet */}
+      <div className="flex flex-col gap-8 px-6 py-16 lg:hidden">
+        <div className="relative mx-auto aspect-[672/738] w-full max-w-[672px]">
+          <Image
+            src="/images/about.png"
+            alt=""
+            fill
+            className="object-cover"
+            sizes="90vw"
+          />
+        </div>
+        <div {...textProps}>
+          <h2
+            className="text-text-heading leading-tight"
+            style={{ fontSize: figma.about.titleSize * 0.5 }}
+          >
+            {content.about.title}
+          </h2>
+          <div
+            className="mt-6 space-y-4 text-text-on-pink"
+            style={{ fontSize: figma.about.bodySize }}
+          >
+            {content.about.body.map((paragraph) => (
+              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop — Figma proportions */}
+      <div
+        className={`${containerClass} layout-ltr relative hidden lg:block`}
+        style={{ height: figma.about.height }}
+      >
+        <div
+          className="absolute"
+          style={{
+            left: figma.about.image.insetStart,
+            top: figma.about.image.insetTop,
+            width: figma.about.image.width,
+            height: figma.about.image.height,
+          }}
+        >
+          <Image
+            src="/images/about.png"
+            alt=""
+            fill
+            className="object-cover"
+            sizes="672px"
+          />
+        </div>
+
+        <h2
+          className="absolute text-start text-text-heading leading-tight"
+          dir={dir}
+          style={{
+            left: figma.about.textBlock.insetStart,
+            top: figma.about.titleInsetTop,
+            width: figma.about.textBlock.width,
+            fontSize: figma.about.titleSize,
+          }}
+        >
+          {content.about.title}
+        </h2>
+
+        <div
+          className="absolute space-y-4 text-start text-text-on-pink"
+          dir={dir}
+          style={{
+            left: figma.about.textBlock.insetStart,
+            top: figma.about.bodyInsetTop,
+            width: figma.about.textBlock.width,
+            fontSize: figma.about.bodySize,
+          }}
+        >
+          {content.about.body.map((paragraph) => (
+            <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

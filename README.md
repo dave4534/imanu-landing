@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Imanu — Landing Page
 
-## Getting Started
+Hebrew-first landing page for Imanu wine experiences, with English toggle. Built with Next.js, Tailwind CSS, and designed for Vercel deployment.
 
-First, run the development server:
+## Quick start
 
 ```bash
+cd website
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) — redirects to `/he` (Hebrew).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Hebrew: `/he`
+- English: `/en`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Changing colors
 
-## Learn More
+All brand colors live in **`src/config/theme.ts`**. Edit hex values there — they flow to CSS custom properties and Tailwind utilities site-wide.
 
-To learn more about Next.js, take a look at the following resources:
+```ts
+export const theme = {
+  section: {
+    intro: "#d0b6a9",  // beige intro panel
+    about: "#e59497",  // pink about section
+    // ...
+  },
+};
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+v2 admin WYSIWYG will read/write this same file structure.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Content & copy
 
-## Deploy on Vercel
+- Hebrew: `src/content/he.ts`
+- English: `src/content/en.ts`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Images
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Replace files in `public/images/` (same filenames) or update paths in section components.
+
+## Environment variables
+
+Copy `.env.example` to `.env.local`:
+
+```bash
+NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/your-handle
+```
+
+WhatsApp is preset to `+972502213083`.
+
+## Deploy to Vercel (via GitHub)
+
+1. Push the `website/` folder to a GitHub repo (root or monorepo subfolder).
+2. Import the repo at [vercel.com/new](https://vercel.com/new).
+3. Set **Root Directory** to `website` if the repo root is the parent `Imanu` folder.
+4. Add `NEXT_PUBLIC_INSTAGRAM_URL` in Vercel → Settings → Environment Variables.
+5. Deploy. Connect your custom domain later in Vercel → Domains.
+
+## Project structure
+
+```
+src/
+├── app/[locale]/     # Hebrew & English routes
+├── components/       # Header, sections, UI
+├── config/           # theme.ts, site.ts (links, WhatsApp)
+├── content/          # he.ts, en.ts (all copy)
+└── lib/              # i18n helpers
+```
+
+## v2 roadmap (not implemented)
+
+- Admin login + in-place WYSIWYG editing
+- Full responsive polish across all sections

@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --theme-brand-logo: #da186a;
+  --theme-text-nav: #58213f;
+  --theme-text-heading: #285e56;
+  --theme-text-on-yellow: #285e56;
+  --theme-text-on-pink: #fff86a;
+  --theme-text-on-green: #fff86a;
+  --theme-section-hero: #ffffff;
+  --theme-section-intro: #d0b6a9;
+  --theme-section-about: #e59497;
+  --theme-section-services: #2c6961;
+  --theme-section-testimonials: #edcb4b;
+  --theme-section-contact: #e59497;
+  --theme-accent-button: #fff86a;
+  --theme-accent-card-yellow: #edcb4b;
+  --theme-accent-card-pink: #e59497;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-google-sans), system-ui, sans-serif;
+
+  --color-brand-logo: var(--theme-brand-logo);
+  --color-text-nav: var(--theme-text-nav);
+  --color-text-heading: var(--theme-text-heading);
+  --color-text-on-yellow: var(--theme-text-on-yellow);
+  --color-text-on-pink: var(--theme-text-on-pink);
+  --color-text-on-green: var(--theme-text-on-green);
+  --color-section-hero: var(--theme-section-hero);
+  --color-section-intro: var(--theme-section-intro);
+  --color-section-about: var(--theme-section-about);
+  --color-section-services: var(--theme-section-services);
+  --color-section-testimonials: var(--theme-section-testimonials);
+  --color-section-contact: var(--theme-section-contact);
+  --color-accent-button: var(--theme-accent-button);
+  --color-accent-card-yellow: var(--theme-accent-card-yellow);
+  --color-accent-card-pink: var(--theme-accent-card-pink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--theme-text-heading);
+  background: var(--theme-section-hero);
+}
+
+/* RTL: Hebrew text aligns right; LTR: English aligns left */
+html[dir="rtl"] body {
+  text-align: right;
+}
+
+html[dir="ltr"] body {
+  text-align: left;
+}
+
+/* Preserve Figma visual layout (image-left, card-right) independent of text direction */
+.layout-ltr {
+  direction: ltr;
 }
