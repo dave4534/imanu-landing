@@ -59,7 +59,7 @@ body.has-admin-footer {
   right: 0;
   bottom: 0;
   z-index: 60;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
 }
 
 /* RTL: Hebrew text aligns right; LTR: English aligns left */

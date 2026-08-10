@@ -17,7 +17,7 @@ export function AdminFooter() {
   }, []);
 
   const footer = (
-    <footer className="admin-footer-bar border-t border-black/10 bg-section-hero/95 py-3 text-center text-sm text-text-heading/60 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+    <footer className="admin-footer-bar border-t border-black/10 bg-section-hero/95 pt-3 text-center text-sm text-text-heading/60 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] backdrop-blur-sm">
       {isLoading ? (
         <span>Admin</span>
       ) : isAdmin ? (
