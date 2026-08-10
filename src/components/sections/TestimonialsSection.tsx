@@ -3,6 +3,7 @@ import type { SiteContent } from "@/content";
 import { containerClass, figma } from "@/config/figma-layout";
 import type { Locale } from "@/lib/i18n";
 import { getDirection, localeTextProps } from "@/lib/i18n";
+import { EditableText } from "@/components/admin/EditableText";
 
 interface TestimonialsSectionProps {
   content: SiteContent;
@@ -18,7 +19,6 @@ export function TestimonialsSection({
 
   return (
     <section className="bg-section-testimonials py-12 lg:py-0">
-      {/* Mobile / tablet */}
       <div className="flex flex-col items-center gap-10 px-6 py-16 lg:hidden">
         <Image
           src="/icons/wine-glass.svg"
@@ -32,15 +32,20 @@ export function TestimonialsSection({
           className={`space-y-8 text-text-heading ${textProps.className}`}
           style={{ fontSize: figma.testimonials.text.fontSize * 0.85 }}
         >
-          {content.testimonials.items.map((quote) => (
-            <blockquote key={quote.slice(0, 32)} className="leading-normal">
-              {quote}
-            </blockquote>
+          {content.testimonials.items.map((quote, index) => (
+            <EditableText
+              key={`testimonial-mobile-${index}`}
+              path={`testimonials.items.${index}`}
+              value={quote}
+              as="blockquote"
+              className="leading-normal text-text-heading"
+              dir={textProps.dir}
+              multiline
+            />
           ))}
         </div>
       </div>
 
-      {/* Desktop — Figma proportions; flex so height grows with quote content */}
       <div
         className={`${containerClass} hidden lg:flex lg:flex-col lg:items-center lg:px-10`}
         style={{
@@ -73,10 +78,16 @@ export function TestimonialsSection({
           }}
         >
           <div className="space-y-[42px]">
-            {content.testimonials.items.map((quote) => (
-              <blockquote key={quote.slice(0, 32)} className="leading-normal">
-                {quote}
-              </blockquote>
+            {content.testimonials.items.map((quote, index) => (
+              <EditableText
+                key={`testimonial-desktop-${index}`}
+                path={`testimonials.items.${index}`}
+                value={quote}
+                as="blockquote"
+                className="leading-normal text-text-heading"
+                dir={dir}
+                multiline
+              />
             ))}
           </div>
         </div>

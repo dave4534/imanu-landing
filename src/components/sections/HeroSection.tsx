@@ -1,49 +1,63 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma } from "@/config/figma-layout";
+import { containerClass } from "@/config/figma-layout";
+import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { getDirection } from "@/lib/i18n";
+import { EditableImage } from "@/components/admin/EditableImage";
+import { EditableText } from "@/components/admin/EditableText";
 
 interface HeroSectionProps {
   content: SiteContent;
   locale: Locale;
+  images: Record<ImageKey, string>;
 }
 
-export function HeroSection({ content, locale }: HeroSectionProps) {
+export function HeroSection({ content, locale, images }: HeroSectionProps) {
   const dir = getDirection(locale);
-  const { width } = figma.hero.textBlock;
 
   return (
     <section className="relative w-full bg-section-hero">
-      <div
-        className="relative w-full max-lg:aspect-[1440/863] max-lg:max-h-[70vh]"
-        style={{ height: figma.hero.height }}
-      >
-        <Image
-          src="/images/PXL_20251129_113001863.MP.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
+      {/* Single height wrapper so text stays anchored to the visible image on mobile */}
+      <div className="relative w-full max-lg:aspect-[1440/863] max-lg:max-h-[70vh] lg:h-[863px]">
+        <EditableImage imageKey="hero" className="absolute inset-0">
+          <Image
+            src={images.hero}
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
+        </EditableImage>
 
-        {/* Text aligned within Figma canvas width, over full-bleed image */}
-        <div className={`${containerClass} pointer-events-none absolute inset-0`}>
+        <div className="pointer-events-none absolute inset-0 z-20">
           <div
-            className="pointer-events-auto absolute right-4 bottom-8 text-right text-white lg:right-[122px] lg:bottom-[212px]"
-            dir={dir}
-            style={{
-              width,
-              maxWidth: "calc(100% - 32px)",
-            }}
+            className={`${containerClass} relative h-full`}
           >
-            <h1 className="text-[40px] font-normal leading-none md:text-[48px] lg:text-[100px]">
-              {content.hero.title}
-            </h1>
-            <p className="mt-0 text-[20px] font-normal leading-tight md:text-[24px] lg:text-[50px]">
-              {content.hero.subtitle}
-            </p>
+            <div
+              className="pointer-events-auto absolute right-4 bottom-6 w-max max-w-[calc(100%-32px)] text-right text-white sm:bottom-8 lg:right-[122px] lg:bottom-[212px] lg:min-w-[471px]"
+              dir={dir}
+              style={{
+                textShadow:
+                  "0 1px 2px rgba(0,0,0,0.4), 0 2px 10px rgba(0,0,0,0.22)",
+              }}
+            >
+              <EditableText
+                path="hero.title"
+                value={content.hero.title}
+                as="h1"
+                className="text-[40px] font-normal leading-none md:text-[48px] lg:text-[100px]"
+                dir={dir}
+              />
+              <EditableText
+                path="hero.subtitle"
+                value={content.hero.subtitle}
+                as="p"
+                className="mt-0 whitespace-nowrap text-[20px] font-normal leading-tight md:text-[24px] lg:text-[50px]"
+                dir={dir}
+              />
+            </div>
           </div>
         </div>
       </div>

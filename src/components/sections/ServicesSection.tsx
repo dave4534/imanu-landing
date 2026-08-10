@@ -1,31 +1,33 @@
 import Image from "next/image";
 import type { ServiceItem, SiteContent } from "@/content";
 import { containerClass, figma } from "@/config/figma-layout";
+import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { localeTextProps } from "@/lib/i18n";
+import { EditableImage } from "@/components/admin/EditableImage";
+import { EditableText } from "@/components/admin/EditableText";
 
 interface ServicesSectionProps {
   content: SiteContent;
   locale: Locale;
+  images: Record<ImageKey, string>;
 }
 
-const serviceImages = [
-  "/images/PXL_20250709_190438676.jpg",
-  "/images/PXL_20251129_112701842.jpg",
-  "/images/about.png",
-  "/images/PXL_20251129_113001863.MP.jpg",
-] as const;
 
-const cardTopOffsets = [90, 116, 144, 144] as const;
+function serviceImageKey(index: number): ImageKey {
+  return `services.${index}` as ImageKey;
+}
 
 function ServiceCard({
   item,
   locale,
   minHeight,
+  index,
 }: {
   item: ServiceItem;
   locale: Locale;
   minHeight: number;
+  index: number;
 }) {
   const cardBg =
     item.cardVariant === "yellow"
@@ -33,6 +35,7 @@ function ServiceCard({
       : "bg-accent-card-pink";
 
   const textProps = localeTextProps(locale);
+  const basePath = `services.items.${index}`;
 
   return (
     <div
@@ -40,12 +43,14 @@ function ServiceCard({
       className={`${cardBg} ${textProps.className} flex flex-col justify-center px-8 lg:px-[137px]`}
       style={{ minHeight, paddingTop: 63, paddingBottom: 63 }}
     >
-      <h3
+      <EditableText
+        path={`${basePath}.title`}
+        value={item.title}
+        as="h3"
         className="font-semibold text-text-heading"
         style={{ fontSize: figma.services.titleSize, lineHeight: 1.2 }}
-      >
-        {item.title}
-      </h3>
+        dir={textProps.dir}
+      />
       <div
         className="mt-6 space-y-4 text-text-heading lg:mt-[50px]"
         style={{
@@ -53,44 +58,65 @@ function ServiceCard({
           maxWidth: figma.services.bodyWidth,
         }}
       >
-        {item.bullets?.map((bullet) => (
-          <p key={bullet.slice(0, 24)}>{bullet}</p>
+        {item.bullets?.map((bullet, bulletIndex) => (
+          <EditableText
+            key={`${item.id}-bullet-${bulletIndex}`}
+            path={`${basePath}.bullets.${bulletIndex}`}
+            value={bullet}
+            as="p"
+            className="text-text-heading"
+            dir={textProps.dir}
+            multiline
+          />
         ))}
-        {item.description && <p>{item.description}</p>}
+        {item.description && (
+          <EditableText
+            path={`${basePath}.description`}
+            value={item.description}
+            as="p"
+            className="text-text-heading"
+            dir={textProps.dir}
+            multiline
+          />
+        )}
       </div>
     </div>
   );
 }
 
-export function ServicesSection({ content, locale }: ServicesSectionProps) {
+export function ServicesSection({
+  content,
+  locale,
+  images,
+}: ServicesSectionProps) {
   return (
     <section id="services" className="bg-section-services">
-      {/* Mobile / tablet — stacked */}
       <div className="flex flex-col gap-12 px-6 py-16 lg:hidden">
         {content.services.items.map((item, index) => (
           <article key={item.id} className="flex flex-col">
-            <div
+            <EditableImage
+              imageKey={serviceImageKey(index)}
               className="relative w-full"
               style={{ height: figma.services.imageHeights[index] * 0.5 }}
             >
               <Image
-                src={serviceImages[index % serviceImages.length]}
+                src={images[serviceImageKey(index)]}
                 alt=""
                 fill
                 className="object-cover"
                 sizes="100vw"
               />
-            </div>
+            </EditableImage>
             <ServiceCard
               item={item}
               locale={locale}
               minHeight={figma.services.cardHeights[index] * 0.6}
+              index={index}
             />
           </article>
         ))}
       </div>
 
-      {/* Desktop — image left, card right (Figma) */}
       <div
         className={`${containerClass} layout-ltr relative hidden lg:block`}
         style={{ height: figma.services.sectionHeight }}
@@ -103,7 +129,8 @@ export function ServicesSection({ content, locale }: ServicesSectionProps) {
 
           return (
             <article key={item.id}>
-              <div
+              <EditableImage
+                imageKey={serviceImageKey(index)}
                 className="absolute"
                 style={{
                   left: figma.services.image.insetStart,
@@ -113,13 +140,13 @@ export function ServicesSection({ content, locale }: ServicesSectionProps) {
                 }}
               >
                 <Image
-                  src={serviceImages[index % serviceImages.length]}
+                  src={images[serviceImageKey(index)]}
                   alt=""
                   fill
                   className="object-cover"
                   sizes="704px"
                 />
-              </div>
+              </EditableImage>
               <div
                 className="absolute"
                 style={{
@@ -132,6 +159,7 @@ export function ServicesSection({ content, locale }: ServicesSectionProps) {
                   item={item}
                   locale={locale}
                   minHeight={cardHeight}
+                  index={index}
                 />
               </div>
             </article>

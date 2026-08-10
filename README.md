@@ -50,6 +50,14 @@ NEXT_PUBLIC_INSTAGRAM_URL=https://www.instagram.com/your-handle
 
 WhatsApp is preset to `+972502213083`.
 
+## Admin editing (WYSIWYG)
+
+Click **Admin** in the page footer, enter the password, then click text or images to edit.
+
+Edits on your computer are saved automatically. On the live Vercel site, connect a **Blob** store (Storage tab) so changes persist — otherwise login works but saves may not stick after redeploy.
+
+Optional: set `ADMIN_PASSWORD` in Vercel env vars to use a different password than the built-in default.
+
 ## Deploy to Vercel (via GitHub)
 
 1. Push the `website/` folder to a GitHub repo (root or monorepo subfolder).

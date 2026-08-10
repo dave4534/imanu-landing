@@ -19,7 +19,7 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  const content = getContent(locale);
+  const content = await getContent(locale);
   return {
     title: content.meta.title,
     description: content.meta.description,

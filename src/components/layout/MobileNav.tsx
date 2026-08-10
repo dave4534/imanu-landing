@@ -1,11 +1,14 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import type { SiteContent } from "@/content";
 import { figma } from "@/config/figma-layout";
 import { siteConfig } from "@/config/site";
-import type { Locale } from "@/lib/i18n";
+import { getDirection, type Locale } from "@/lib/i18n";
+
+/** Matches Header mobile row minHeight (logo + padding) */
+export const MOBILE_HEADER_HEIGHT = figma.header.logo.height + 20;
 
 interface MobileNavProps {
   locale: Locale;
@@ -14,95 +17,111 @@ interface MobileNavProps {
 
 export function MobileNav({ locale, content }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
+  const dir = getDirection(locale);
+
+  const navItems = useMemo(
+    () => [
+      { href: "#about", label: content.nav.about, external: false },
+      { href: "#services", label: content.nav.services, external: false },
+      {
+        href: siteConfig.instagramUrl,
+        label: content.nav.instagram,
+        external: true,
+      },
+      { href: "#contact", label: content.nav.contact, external: false },
+    ],
+    [content.nav],
+  );
 
   useEffect(() => {
-    if (!open) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      setAnimateIn(false);
+      document.body.style.overflow = "";
+      return;
+    }
+
     document.body.style.overflow = "hidden";
+    const frame = requestAnimationFrame(() => setAnimateIn(true));
     return () => {
+      cancelAnimationFrame(frame);
       document.body.style.overflow = "";
     };
   }, [open]);
 
-  const linkClass =
-    "block whitespace-nowrap transition-opacity hover:opacity-70";
+  function closeMenu() {
+    setAnimateIn(false);
+    window.setTimeout(() => setOpen(false), 300);
+  }
+
+  function toggleMenu() {
+    if (open) closeMenu();
+    else setOpen(true);
+  }
+
+  const menu =
+    open && mounted
+      ? createPortal(
+          <nav
+            className="fixed inset-x-0 bottom-0 z-[40] flex w-full flex-col bg-section-hero px-8 pb-12"
+            dir={dir}
+            aria-label="Mobile navigation"
+            style={{ top: MOBILE_HEADER_HEIGHT }}
+          >
+            <div className="flex flex-1 flex-col justify-center gap-10 pt-4">
+              {navItems.map((item, index) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                  className="block whitespace-nowrap text-[32px] leading-tight text-text-nav transition-opacity duration-500 ease-out"
+                  style={{
+                    opacity: animateIn ? 1 : 0,
+                    transitionDelay: animateIn ? `${120 + index * 80}ms` : "0ms",
+                  }}
+                  onClick={closeMenu}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </nav>,
+          document.body,
+        )
+      : null;
 
   return (
-    <div className="md:hidden">
+    <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className="flex flex-col justify-center gap-1.5 p-2"
-        aria-label="Open menu"
+        onClick={toggleMenu}
+        className="relative flex h-10 w-10 items-center justify-center"
+        aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
       >
-        <span className="block h-0.5 w-6 bg-text-nav" />
-        <span className="block h-0.5 w-6 bg-text-nav" />
-        <span className="block h-0.5 w-6 bg-text-nav" />
+        <span
+          className={`absolute block h-0.5 w-6 bg-text-nav transition-all duration-300 ease-out ${
+            open ? "translate-y-0 rotate-45" : "-translate-y-[7px]"
+          }`}
+        />
+        <span
+          className={`absolute block h-0.5 w-6 bg-text-nav transition-all duration-300 ease-out ${
+            open ? "scale-x-0 opacity-0" : "scale-x-100 opacity-100"
+          }`}
+        />
+        <span
+          className={`absolute block h-0.5 w-6 bg-text-nav transition-all duration-300 ease-out ${
+            open ? "translate-y-0 -rotate-45" : "translate-y-[7px]"
+          }`}
+        />
       </button>
-
-      {open && (
-        <div className="fixed inset-0 z-[100]">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/40"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-          />
-          <nav
-            className="absolute start-0 top-0 flex h-full w-[min(100%,320px)] flex-col gap-6 bg-section-hero p-6 shadow-lg"
-            style={{ fontSize: figma.header.fontSize }}
-          >
-            <div className="flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="p-2 text-2xl leading-none text-text-nav"
-                aria-label="Close menu"
-              >
-                ×
-              </button>
-            </div>
-            <a
-              href="#contact"
-              className={linkClass}
-              onClick={() => setOpen(false)}
-            >
-              {content.nav.contact}
-            </a>
-            <a
-              href={siteConfig.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={linkClass}
-              onClick={() => setOpen(false)}
-            >
-              {content.nav.instagram}
-            </a>
-            <a
-              href="#about"
-              className={linkClass}
-              onClick={() => setOpen(false)}
-            >
-              {content.nav.about}
-            </a>
-            <a
-              href="#services"
-              className={linkClass}
-              onClick={() => setOpen(false)}
-            >
-              {content.nav.services}
-            </a>
-            <Link
-              href={`/${locale}`}
-              className="mt-auto"
-              onClick={() => setOpen(false)}
-              aria-label={siteConfig.siteName}
-            >
-              Imanu
-            </Link>
-          </nav>
-        </div>
-      )}
-    </div>
+      {menu}
+    </>
   );
 }

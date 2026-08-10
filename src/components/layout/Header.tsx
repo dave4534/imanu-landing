@@ -18,15 +18,22 @@ export function Header({ locale, content }: HeaderProps) {
   const gap = figma.header.navGap;
 
   return (
-    <header className="sticky top-0 z-50 bg-section-hero/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 bg-section-hero backdrop-blur-sm md:bg-section-hero/95">
       <div
         className={`${containerClass} layout-ltr px-6 py-1 lg:px-10`}
         style={{ minHeight: figma.header.logo.height + 20 }}
       >
         {/* Mobile: hamburger + centered logo */}
-        <div className="flex items-center justify-between md:hidden">
+        <div
+          className="relative z-50 grid grid-cols-[2.5rem_1fr_2.5rem] items-center bg-section-hero md:hidden"
+          style={{ minHeight: figma.header.logo.height + 20 }}
+        >
           <MobileNav locale={locale} content={content} />
-          <Link href={`/${locale}`} aria-label={siteConfig.siteName}>
+          <Link
+            href={`/${locale}`}
+            aria-label={siteConfig.siteName}
+            className="flex justify-center"
+          >
             <Image
               src="/icons/Logo.svg"
               alt="Imanu"
@@ -36,7 +43,7 @@ export function Header({ locale, content }: HeaderProps) {
               className="h-auto w-[95px]"
             />
           </Link>
-          <div className="w-10" aria-hidden="true" />
+          <div aria-hidden="true" />
         </div>
 
         {/* Desktop: 60px from logo, 60px between items */}
@@ -79,11 +86,11 @@ export function Header({ locale, content }: HeaderProps) {
             className="flex items-center"
             style={{ fontSize: figma.header.fontSize, gap }}
           >
-            <a href="#about" className={navLinkClass}>
-              {content.nav.about}
-            </a>
             <a href="#services" className={navLinkClass}>
               {content.nav.services}
+            </a>
+            <a href="#about" className={navLinkClass}>
+              {content.nav.about}
             </a>
           </nav>
         </div>
