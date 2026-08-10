@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
-import { head, put } from "@vercel/blob";
+import { list, put } from "@vercel/blob";
 import {
   emptyOverrides,
   type ContentOverrides,
@@ -13,23 +13,33 @@ const LOCAL_OVERRIDES_PATH = path.join(
   "content-overrides.json",
 );
 
-export async function readOverrides(): Promise<ContentOverrides> {
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    try {
-      const meta = await head(BLOB_OVERRIDES_PATH);
-      const response = await fetch(meta.downloadUrl, {
-        cache: "no-store",
-        headers: {
-          authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
-        },
-      });
-      if (response.ok) {
-        return normalizeOverrides(await response.json());
-      }
-    } catch {
-      // Blob not created yet — fall through to local file
-    }
+async function readOverridesFromBlob(): Promise<ContentOverrides | null> {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) return null;
+
+  try {
+    const { blobs } = await list({ prefix: BLOB_OVERRIDES_PATH, limit: 10 });
+    const blob =
+      blobs.find((entry) => entry.pathname === BLOB_OVERRIDES_PATH) ??
+      blobs[0];
+
+    if (!blob) return null;
+
+    const cacheBuster = new Date(blob.uploadedAt).getTime();
+    const response = await fetch(`${blob.url}?v=${cacheBuster}`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) return null;
+    return normalizeOverrides(await response.json());
+  } catch {
+    return null;
   }
+}
+
+export async function readOverrides(): Promise<ContentOverrides> {
+  const fromBlob = await readOverridesFromBlob();
+  if (fromBlob) return fromBlob;
 
   try {
     const raw = await readFile(LOCAL_OVERRIDES_PATH, "utf8");
@@ -47,6 +57,7 @@ export async function writeOverrides(data: ContentOverrides): Promise<void> {
       access: "public",
       addRandomSuffix: false,
       contentType: "application/json",
+      cacheControlMaxAge: 60,
     });
     return;
   }

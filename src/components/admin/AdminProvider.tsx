@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import type { Locale } from "@/lib/i18n";
+import type { ContentOverrides } from "@/lib/admin/types";
 import { AdminToast } from "@/components/admin/AdminToast";
 
 interface AdminContextValue {
@@ -25,6 +26,7 @@ interface AdminContextValue {
   saveText: (path: string, value: string) => Promise<string | null>;
   uploadImage: (imageKey: string, file: File) => Promise<string | null>;
   showToast: (message: string) => void;
+  getTextValue: (path: string, fallback: string) => string;
 }
 
 const AdminContext = createContext<AdminContextValue | null>(null);
@@ -41,6 +43,9 @@ export function AdminProvider({
   const [isLoading, setIsLoading] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [textOverrides, setTextOverrides] = useState<Record<string, string>>(
+    {},
+  );
 
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
@@ -57,9 +62,35 @@ export function AdminProvider({
     setIsLoading(false);
   }, []);
 
+  const loadOverrides = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/overrides", {
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+      const data = (await response.json()) as ContentOverrides;
+      setTextOverrides(data[locale] ?? {});
+    } catch {
+      // Keep existing optimistic overrides if refresh fails.
+    }
+  }, [locale]);
+
   useEffect(() => {
     void refreshSession();
   }, [refreshSession]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      setTextOverrides({});
+      return;
+    }
+    void loadOverrides();
+  }, [isAdmin, loadOverrides]);
+
+  const getTextValue = useCallback(
+    (path: string, fallback: string) => textOverrides[path] ?? fallback,
+    [textOverrides],
+  );
 
   const login = useCallback(
     async (password: string) => {
@@ -72,20 +103,24 @@ export function AdminProvider({
       if (!response.ok) return data.error ?? "Login failed.";
       setIsAdmin(true);
       setShowLogin(false);
+      await loadOverrides();
       router.refresh();
       return null;
     },
-    [router],
+    [loadOverrides, router],
   );
 
   const logout = useCallback(async () => {
     await fetch("/api/admin/session", { method: "DELETE" });
     setIsAdmin(false);
+    setTextOverrides({});
     router.refresh();
   }, [router]);
 
   const saveText = useCallback(
     async (path: string, value: string) => {
+      setTextOverrides((current) => ({ ...current, [path]: value }));
+
       try {
         const response = await fetch("/api/admin/overrides", {
           method: "PATCH",
@@ -93,19 +128,44 @@ export function AdminProvider({
           body: JSON.stringify({ locale, path, value }),
         });
 
-        let data: { error?: string } = {};
+        let data: { error?: string; overrides?: ContentOverrides } = {};
         try {
-          data = (await response.json()) as { error?: string };
+          data = (await response.json()) as {
+            error?: string;
+            overrides?: ContentOverrides;
+          };
         } catch {
           if (!response.ok) {
+            setTextOverrides((current) => {
+              const next = { ...current };
+              delete next[path];
+              return next;
+            });
             return "Save failed. The server returned an unexpected response.";
           }
         }
 
-        if (!response.ok) return data.error ?? "Save failed.";
+        if (!response.ok) {
+          setTextOverrides((current) => {
+            const next = { ...current };
+            delete next[path];
+            return next;
+          });
+          return data.error ?? "Save failed.";
+        }
+
+        if (data.overrides?.[locale]) {
+          setTextOverrides(data.overrides[locale]);
+        }
+
         router.refresh();
         return null;
       } catch {
+        setTextOverrides((current) => {
+          const next = { ...current };
+          delete next[path];
+          return next;
+        });
         return "Save failed. Check your connection and try again.";
       }
     },
@@ -156,6 +216,7 @@ export function AdminProvider({
       saveText,
       uploadImage,
       showToast,
+      getTextValue,
     }),
     [
       locale,
@@ -167,6 +228,7 @@ export function AdminProvider({
       saveText,
       uploadImage,
       showToast,
+      getTextValue,
     ],
   );
 

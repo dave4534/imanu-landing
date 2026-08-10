@@ -42,11 +42,12 @@ export function EditableText({
   dir,
   multiline = false,
 }: EditableTextProps) {
-  const { isAdmin, saveText, showToast } = useAdmin();
+  const { isAdmin, saveText, showToast, getTextValue } = useAdmin();
   const anchorRef = useRef<HTMLElement | null>(null);
   const editorRef = useRef<HTMLDivElement | null>(null);
+  const resolvedValue = getTextValue(path, value);
   const [isEditing, setIsEditing] = useState(false);
-  const [draft, setDraft] = useState(value);
+  const [draft, setDraft] = useState(resolvedValue);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [editorPosition, setEditorPosition] = useState<EditorPosition | null>(
@@ -55,23 +56,23 @@ export function EditableText({
   const inputRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null);
 
   useEffect(() => {
-    setDraft(value);
-  }, [value]);
+    if (!isEditing) setDraft(resolvedValue);
+  }, [isEditing, resolvedValue]);
 
   useEffect(() => {
     if (isEditing) inputRef.current?.focus();
   }, [isEditing, editorPosition]);
 
   const closeEditor = useCallback(() => {
-    setDraft(value);
+    setDraft(resolvedValue);
     setError(null);
     setIsEditing(false);
     setEditorPosition(null);
-  }, [value]);
+  }, [resolvedValue]);
 
   const handleSave = useCallback(async () => {
     const trimmed = draft.trim();
-    if (!trimmed || trimmed === value) {
+    if (!trimmed || trimmed === resolvedValue) {
       closeEditor();
       return;
     }
@@ -91,7 +92,7 @@ export function EditableText({
     } finally {
       setIsSaving(false);
     }
-  }, [closeEditor, draft, path, saveText, showToast, value]);
+  }, [closeEditor, draft, path, resolvedValue, saveText, showToast]);
 
   function openEditor() {
     const rect = anchorRef.current?.getBoundingClientRect();
@@ -102,7 +103,7 @@ export function EditableText({
       left: rect.left,
       width: Math.max(rect.width, 280),
     });
-    setDraft(value);
+    setDraft(resolvedValue);
     setError(null);
     setIsEditing(true);
   }
@@ -134,7 +135,7 @@ export function EditableText({
   if (!isAdmin) {
     return (
       <Component className={className} style={style} dir={dir}>
-        {value}
+        {resolvedValue}
       </Component>
     );
   }
@@ -221,7 +222,7 @@ export function EditableText({
         onClick={openEditor}
         title="Click to edit"
       >
-        {value}
+        {resolvedValue}
       </Component>
       {editor}
     </>
