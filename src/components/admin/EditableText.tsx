@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -43,6 +44,7 @@ export function EditableText({
 }: EditableTextProps) {
   const { isAdmin, saveText, showToast } = useAdmin();
   const anchorRef = useRef<HTMLElement | null>(null);
+  const editorRef = useRef<HTMLDivElement | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +62,37 @@ export function EditableText({
     if (isEditing) inputRef.current?.focus();
   }, [isEditing, editorPosition]);
 
+  const closeEditor = useCallback(() => {
+    setDraft(value);
+    setError(null);
+    setIsEditing(false);
+    setEditorPosition(null);
+  }, [value]);
+
+  const handleSave = useCallback(async () => {
+    const trimmed = draft.trim();
+    if (!trimmed || trimmed === value) {
+      closeEditor();
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+    try {
+      const result = await saveText(path, trimmed);
+      if (result) {
+        setError(result);
+        showToast(result);
+        closeEditor();
+        return;
+      }
+      closeEditor();
+      showToast("Changes saved");
+    } finally {
+      setIsSaving(false);
+    }
+  }, [closeEditor, draft, path, saveText, showToast, value]);
+
   function openEditor() {
     const rect = anchorRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -74,34 +107,29 @@ export function EditableText({
     setIsEditing(true);
   }
 
-  async function handleSave() {
-    const trimmed = draft.trim();
-    if (!trimmed || trimmed === value) {
-      setIsEditing(false);
-      setEditorPosition(null);
-      setDraft(value);
-      return;
+  useEffect(() => {
+    if (!isEditing) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as Node;
+      if (editorRef.current?.contains(target)) return;
+      void handleSave();
     }
 
-    setIsSaving(true);
-    setError(null);
-    const result = await saveText(path, trimmed);
-    setIsSaving(false);
-    if (result) {
-      setError(result);
-      return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeEditor();
+      }
     }
-    setIsEditing(false);
-    setEditorPosition(null);
-    showToast("Changes saved");
-  }
 
-  function closeEditor() {
-    setDraft(value);
-    setError(null);
-    setIsEditing(false);
-    setEditorPosition(null);
-  }
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeEditor, handleSave, isEditing]);
 
   if (!isAdmin) {
     return (
@@ -115,6 +143,7 @@ export function EditableText({
     isEditing && editorPosition
       ? createPortal(
           <div
+            ref={editorRef}
             className="fixed z-[120]"
             style={{
               top: editorPosition.top,
@@ -128,9 +157,11 @@ export function EditableText({
                 ref={inputRef as React.RefObject<HTMLTextAreaElement>}
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}
-                onBlur={() => void handleSave()}
                 onKeyDown={(event) => {
-                  if (event.key === "Escape") closeEditor();
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    closeEditor();
+                  }
                 }}
                 className={editFieldClassName}
                 rows={Math.min(8, Math.max(3, draft.split("\n").length + 1))}
@@ -142,18 +173,38 @@ export function EditableText({
                 type="text"
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}
-                onBlur={() => void handleSave()}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     event.preventDefault();
                     void handleSave();
                   }
-                  if (event.key === "Escape") closeEditor();
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    closeEditor();
+                  }
                 }}
                 className={editFieldClassName}
                 disabled={isSaving}
               />
             )}
+            <div className="mt-2 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={closeEditor}
+                disabled={isSaving}
+                className="rounded border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleSave()}
+                disabled={isSaving}
+                className="rounded bg-brand-logo px-3 py-1 text-sm text-white hover:opacity-90 disabled:opacity-50"
+              >
+                {isSaving ? "Saving…" : "Done"}
+              </button>
+            </div>
             {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
           </div>,
           document.body,

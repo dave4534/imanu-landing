@@ -46,6 +46,12 @@ export async function writeOverrides(data: ContentOverrides): Promise<void> {
     return;
   }
 
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Saving is not configured for production. Connect Vercel Blob storage.",
+    );
+  }
+
   await mkdir(path.dirname(LOCAL_OVERRIDES_PATH), { recursive: true });
   await writeFile(LOCAL_OVERRIDES_PATH, payload, "utf8");
 }
@@ -76,6 +82,12 @@ export async function saveUploadedImage(
       addRandomSuffix: false,
     });
     return blob.url;
+  }
+
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Image uploads are not configured for production. Connect Vercel Blob storage.",
+    );
   }
 
   const uploadsDir = path.join(process.cwd(), "public", "images", "uploads");

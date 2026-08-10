@@ -86,33 +86,59 @@ export function AdminProvider({
 
   const saveText = useCallback(
     async (path: string, value: string) => {
-      const response = await fetch("/api/admin/overrides", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale, path, value }),
-      });
-      const data = (await response.json()) as { error?: string };
-      if (!response.ok) return data.error ?? "Save failed.";
-      router.refresh();
-      return null;
+      try {
+        const response = await fetch("/api/admin/overrides", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ locale, path, value }),
+        });
+
+        let data: { error?: string } = {};
+        try {
+          data = (await response.json()) as { error?: string };
+        } catch {
+          if (!response.ok) {
+            return "Save failed. The server returned an unexpected response.";
+          }
+        }
+
+        if (!response.ok) return data.error ?? "Save failed.";
+        router.refresh();
+        return null;
+      } catch {
+        return "Save failed. Check your connection and try again.";
+      }
     },
     [locale, router],
   );
 
   const uploadImage = useCallback(
     async (imageKey: string, file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("imageKey", imageKey);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("imageKey", imageKey);
 
-      const response = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = (await response.json()) as { error?: string };
-      if (!response.ok) return data.error ?? "Upload failed.";
-      router.refresh();
-      return null;
+        const response = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        let data: { error?: string } = {};
+        try {
+          data = (await response.json()) as { error?: string };
+        } catch {
+          if (!response.ok) {
+            return "Upload failed. The server returned an unexpected response.";
+          }
+        }
+
+        if (!response.ok) return data.error ?? "Upload failed.";
+        router.refresh();
+        return null;
+      } catch {
+        return "Upload failed. Check your connection and try again.";
+      }
     },
     [router],
   );

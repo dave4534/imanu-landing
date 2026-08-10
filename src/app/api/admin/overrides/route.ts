@@ -34,7 +34,13 @@ export async function PATCH(request: Request) {
 
   if (body.imageKey && typeof body.imageUrl === "string") {
     overrides.images[body.imageKey] = body.imageUrl;
-    await writeOverrides(overrides);
+    try {
+      await writeOverrides(overrides);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to save changes.";
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
     return NextResponse.json({ ok: true, overrides });
   }
 
@@ -45,7 +51,13 @@ export async function PATCH(request: Request) {
     typeof body.value === "string"
   ) {
     overrides[body.locale][body.path] = body.value;
-    await writeOverrides(overrides);
+    try {
+      await writeOverrides(overrides);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to save changes.";
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
     return NextResponse.json({ ok: true, overrides });
   }
 

@@ -49,6 +49,19 @@ body {
   background: var(--theme-section-hero);
 }
 
+body.has-admin-footer {
+  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.admin-footer-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* RTL: Hebrew text aligns right; LTR: English aligns left */
 html[dir="rtl"] body {
   text-align: right;

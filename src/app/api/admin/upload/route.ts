@@ -38,10 +38,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const imageUrl = await saveUploadedImage(file, imageKey);
-  const overrides = await readOverrides();
-  overrides.images[imageKey as ImageKey] = imageUrl;
-  await writeOverrides(overrides);
-
-  return NextResponse.json({ ok: true, imageUrl });
+  try {
+    const imageUrl = await saveUploadedImage(file, imageKey);
+    const overrides = await readOverrides();
+    overrides.images[imageKey as ImageKey] = imageUrl;
+    await writeOverrides(overrides);
+    return NextResponse.json({ ok: true, imageUrl });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to upload image.";
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }
