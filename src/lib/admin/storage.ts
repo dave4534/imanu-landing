@@ -17,7 +17,12 @@ export async function readOverrides(): Promise<ContentOverrides> {
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
       const meta = await head(BLOB_OVERRIDES_PATH);
-      const response = await fetch(meta.url);
+      const response = await fetch(meta.downloadUrl, {
+        cache: "no-store",
+        headers: {
+          authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
+        },
+      });
       if (response.ok) {
         return normalizeOverrides(await response.json());
       }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import type { Locale } from "@/lib/i18n";
 import { isLocale } from "@/lib/i18n";
 import { isAdminSession } from "@/lib/admin/session";
@@ -41,6 +42,8 @@ export async function PATCH(request: Request) {
         error instanceof Error ? error.message : "Failed to save changes.";
       return NextResponse.json({ error: message }, { status: 503 });
     }
+    revalidatePath("/he");
+    revalidatePath("/en");
     return NextResponse.json({ ok: true, overrides });
   }
 
@@ -58,6 +61,8 @@ export async function PATCH(request: Request) {
         error instanceof Error ? error.message : "Failed to save changes.";
       return NextResponse.json({ error: message }, { status: 503 });
     }
+    revalidatePath("/he");
+    revalidatePath("/en");
     return NextResponse.json({ ok: true, overrides });
   }
 

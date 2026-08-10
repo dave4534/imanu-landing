@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { isAdminSession } from "@/lib/admin/session";
 import {
   readOverrides,
@@ -43,6 +44,8 @@ export async function POST(request: Request) {
     const overrides = await readOverrides();
     overrides.images[imageKey as ImageKey] = imageUrl;
     await writeOverrides(overrides);
+    revalidatePath("/he");
+    revalidatePath("/en");
     return NextResponse.json({ ok: true, imageUrl });
   } catch (error) {
     const message =
