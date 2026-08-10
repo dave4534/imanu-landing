@@ -42,7 +42,7 @@ export async function PATCH(request: Request) {
         error instanceof Error ? error.message : "Failed to save changes.";
       return NextResponse.json({ error: message }, { status: 503 });
     }
-    revalidatePath("/he");
+    revalidatePath("/");
     revalidatePath("/en");
     return NextResponse.json({ ok: true, overrides });
   }
@@ -61,7 +61,7 @@ export async function PATCH(request: Request) {
         error instanceof Error ? error.message : "Failed to save changes.";
       return NextResponse.json({ error: message }, { status: 503 });
     }
-    revalidatePath("/he");
+    revalidatePath("/");
     revalidatePath("/en");
     return NextResponse.json({ ok: true, overrides });
   }

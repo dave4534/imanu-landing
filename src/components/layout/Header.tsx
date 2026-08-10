@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { SiteContent } from "@/content";
 import { containerClass, figma } from "@/config/figma-layout";
 import type { Locale } from "@/lib/i18n";
+import { localePath } from "@/lib/i18n";
 import { siteConfig } from "@/config/site";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { EditableNavLink } from "@/components/admin/EditableNavLink";
@@ -30,7 +31,7 @@ export function Header({ locale, content }: HeaderProps) {
             <MobileNav locale={locale} content={content} />
           </div>
           <Link
-            href={`/${locale}`}
+            href={localePath(locale)}
             aria-label={siteConfig.siteName}
             className="flex h-full items-center justify-center"
           >
@@ -75,7 +76,7 @@ export function Header({ locale, content }: HeaderProps) {
             />
           </nav>
 
-          <Link href={`/${locale}`} aria-label={siteConfig.siteName}>
+          <Link href={localePath(locale)} aria-label={siteConfig.siteName}>
             <Image
               src="/icons/Logo.svg"
               alt="Imanu"

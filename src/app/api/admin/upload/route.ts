@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     const overrides = await readOverrides();
     overrides.images[imageKey as ImageKey] = imageUrl;
     await writeOverrides(overrides);
-    revalidatePath("/he");
+    revalidatePath("/");
     revalidatePath("/en");
     return NextResponse.json({ ok: true, imageUrl });
   } catch (error) {

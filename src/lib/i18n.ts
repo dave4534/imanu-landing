@@ -26,3 +26,8 @@ export function localeCtaStackClass(locale: Locale): string {
 export function getAlternateLocale(locale: Locale): Locale {
   return locale === "he" ? "en" : "he";
 }
+
+/** Public URL for a locale — Hebrew lives at `/`, English at `/en` */
+export function localePath(locale: Locale): string {
+  return locale === defaultLocale ? "/" : `/${locale}`;
+}
