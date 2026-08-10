@@ -6,7 +6,7 @@ export function AdminFooter() {
   const { isAdmin, isLoading, openLogin, logout } = useAdmin();
 
   return (
-    <footer className="border-t border-black/10 bg-section-hero py-3 text-center text-sm text-text-heading/60">
+    <footer className="fixed inset-x-0 bottom-0 z-[30] border-t border-black/10 bg-section-hero/95 py-3 text-center text-sm text-text-heading/60 backdrop-blur-sm">
       {isLoading ? (
         <span>Admin</span>
       ) : isAdmin ? (

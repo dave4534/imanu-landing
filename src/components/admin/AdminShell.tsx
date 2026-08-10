@@ -14,7 +14,7 @@ interface AdminShellProps {
 export function AdminShell({ locale, children }: AdminShellProps) {
   return (
     <AdminProvider locale={locale}>
-      {children}
+      <div className="pb-14">{children}</div>
       <AdminFooter />
       <AdminLoginModal />
     </AdminProvider>

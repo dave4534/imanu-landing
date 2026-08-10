@@ -5,6 +5,7 @@ import { containerClass, figma } from "@/config/figma-layout";
 import type { Locale } from "@/lib/i18n";
 import { siteConfig } from "@/config/site";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { EditableNavLink } from "@/components/admin/EditableNavLink";
 
 interface HeaderProps {
   locale: Locale;
@@ -20,19 +21,18 @@ export function Header({ locale, content }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-section-hero backdrop-blur-sm md:bg-section-hero/95">
       <div
-        className={`${containerClass} layout-ltr px-6 py-1 lg:px-10`}
+        className={`${containerClass} layout-ltr px-6 lg:px-10 lg:py-1`}
         style={{ minHeight: figma.header.logo.height + 20 }}
       >
         {/* Mobile: hamburger + centered logo */}
-        <div
-          className="relative z-50 grid grid-cols-[2.5rem_1fr_2.5rem] items-center bg-section-hero md:hidden"
-          style={{ minHeight: figma.header.logo.height + 20 }}
-        >
-          <MobileNav locale={locale} content={content} />
+        <div className="relative z-50 grid h-[67px] grid-cols-[40px_1fr_40px] items-center bg-section-hero md:hidden">
+          <div className="flex h-full items-center justify-center">
+            <MobileNav locale={locale} content={content} />
+          </div>
           <Link
             href={`/${locale}`}
             aria-label={siteConfig.siteName}
-            className="flex justify-center"
+            className="flex h-full items-center justify-center"
           >
             <Image
               src="/icons/Logo.svg"
@@ -40,7 +40,7 @@ export function Header({ locale, content }: HeaderProps) {
               width={figma.header.logo.width}
               height={figma.header.logo.height}
               priority
-              className="h-auto w-[95px]"
+              className="h-[47px] w-[95px] object-contain"
             />
           </Link>
           <div aria-hidden="true" />
@@ -58,17 +58,21 @@ export function Header({ locale, content }: HeaderProps) {
             className="flex items-center"
             style={{ fontSize: figma.header.fontSize, gap }}
           >
-            <a href="#contact" className={navLinkClass}>
-              {content.nav.contact}
-            </a>
-            <a
-              href={siteConfig.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <EditableNavLink
+              href="#contact"
+              path="nav.contact"
+              value={content.nav.contact}
+              locale={locale}
               className={navLinkClass}
-            >
-              {content.nav.instagram}
-            </a>
+            />
+            <EditableNavLink
+              href={siteConfig.instagramUrl}
+              path="nav.instagram"
+              value={content.nav.instagram}
+              locale={locale}
+              className={navLinkClass}
+              external
+            />
           </nav>
 
           <Link href={`/${locale}`} aria-label={siteConfig.siteName}>
@@ -86,12 +90,20 @@ export function Header({ locale, content }: HeaderProps) {
             className="flex items-center"
             style={{ fontSize: figma.header.fontSize, gap }}
           >
-            <a href="#services" className={navLinkClass}>
-              {content.nav.services}
-            </a>
-            <a href="#about" className={navLinkClass}>
-              {content.nav.about}
-            </a>
+            <EditableNavLink
+              href="#services"
+              path="nav.services"
+              value={content.nav.services}
+              locale={locale}
+              className={navLinkClass}
+            />
+            <EditableNavLink
+              href="#about"
+              path="nav.about"
+              value={content.nav.about}
+              locale={locale}
+              className={navLinkClass}
+            />
           </nav>
         </div>
       </div>

@@ -6,6 +6,7 @@ import type { SiteContent } from "@/content";
 import { figma } from "@/config/figma-layout";
 import { siteConfig } from "@/config/site";
 import { getDirection, type Locale } from "@/lib/i18n";
+import { EditableNavLink } from "@/components/admin/EditableNavLink";
 
 /** Matches Header mobile row minHeight (logo + padding) */
 export const MOBILE_HEADER_HEIGHT = figma.header.logo.height + 20;
@@ -23,14 +24,30 @@ export function MobileNav({ locale, content }: MobileNavProps) {
 
   const navItems = useMemo(
     () => [
-      { href: "#about", label: content.nav.about, external: false },
-      { href: "#services", label: content.nav.services, external: false },
+      {
+        href: "#about",
+        path: "nav.about",
+        label: content.nav.about,
+        external: false,
+      },
+      {
+        href: "#services",
+        path: "nav.services",
+        label: content.nav.services,
+        external: false,
+      },
       {
         href: siteConfig.instagramUrl,
+        path: "nav.instagram",
         label: content.nav.instagram,
         external: true,
       },
-      { href: "#contact", label: content.nav.contact, external: false },
+      {
+        href: "#contact",
+        path: "nav.contact",
+        label: content.nav.contact,
+        external: false,
+      },
     ],
     [content.nav],
   );
@@ -75,20 +92,20 @@ export function MobileNav({ locale, content }: MobileNavProps) {
           >
             <div className="flex flex-1 flex-col justify-center gap-10 pt-4">
               {navItems.map((item, index) => (
-                <a
-                  key={item.href}
+                <EditableNavLink
+                  key={item.path}
                   href={item.href}
-                  target={item.external ? "_blank" : undefined}
-                  rel={item.external ? "noopener noreferrer" : undefined}
+                  path={item.path}
+                  value={item.label}
+                  locale={locale}
+                  external={item.external}
+                  onNavigate={closeMenu}
                   className="block whitespace-nowrap text-[32px] leading-tight text-text-nav transition-opacity duration-500 ease-out"
                   style={{
                     opacity: animateIn ? 1 : 0,
                     transitionDelay: animateIn ? `${120 + index * 80}ms` : "0ms",
                   }}
-                  onClick={closeMenu}
-                >
-                  {item.label}
-                </a>
+                />
               ))}
             </div>
           </nav>,

@@ -32,44 +32,32 @@ export function SocialButton({
   const external = variant === "instagram";
   const { button } = figma.intro;
   const dir = getDirection(locale);
-  const icon = (
-    <Image
-      src={iconSrc}
-      alt=""
-      width={button.iconSize}
-      height={button.iconSize}
-      className="shrink-0"
-    />
-  );
 
-  const sharedClassName = `inline-flex items-center justify-center rounded bg-accent-button text-text-on-yellow transition-opacity hover:opacity-90 ${className}`;
+  const sharedClassName = `inline-flex flex-row items-center justify-center rounded bg-accent-button text-text-on-yellow transition-opacity hover:opacity-90 ${className}`;
   const sharedStyle = {
     height: button.height,
     paddingInline: button.paddingX,
     gap: button.gap,
     fontSize: button.fontSize,
+    direction: "ltr" as const,
   };
 
-  const labelNode = (
-    <EditableText path={editPath} value={label} as="span" dir={dir} />
+  const content = (
+    <>
+      <EditableText path={editPath} value={label} as="span" dir={dir} />
+      <Image
+        src={iconSrc}
+        alt=""
+        width={button.iconSize}
+        height={button.iconSize}
+        className="shrink-0"
+      />
+    </>
   );
-
-  const content =
-    dir === "rtl" ? (
-      <>
-        {icon}
-        {labelNode}
-      </>
-    ) : (
-      <>
-        {labelNode}
-        {icon}
-      </>
-    );
 
   if (isAdmin) {
     return (
-      <div className={sharedClassName} dir={dir} style={sharedStyle}>
+      <div className={sharedClassName} style={sharedStyle}>
         {content}
       </div>
     );
@@ -80,7 +68,6 @@ export function SocialButton({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      dir={dir}
       className={sharedClassName}
       style={sharedStyle}
     >
