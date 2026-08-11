@@ -1,10 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { SiteContent } from "@/content";
 import { containerClass, figma } from "@/config/figma-layout";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
 import { siteConfig } from "@/config/site";
+import { LogoLink } from "@/components/layout/LogoLink";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { EditableNavLink } from "@/components/admin/EditableNavLink";
 
@@ -30,9 +30,9 @@ export function Header({ locale, content }: HeaderProps) {
           <div className="flex h-full items-center justify-center">
             <MobileNav locale={locale} content={content} />
           </div>
-          <Link
+          <LogoLink
             href={localePath(locale)}
-            aria-label={siteConfig.siteName}
+            ariaLabel={siteConfig.siteName}
             className="flex h-full items-center justify-center"
           >
             <Image
@@ -43,7 +43,7 @@ export function Header({ locale, content }: HeaderProps) {
               priority
               className="h-[47px] w-[95px] object-contain"
             />
-          </Link>
+          </LogoLink>
           <div aria-hidden="true" />
         </div>
 
@@ -76,7 +76,7 @@ export function Header({ locale, content }: HeaderProps) {
             />
           </nav>
 
-          <Link href={localePath(locale)} aria-label={siteConfig.siteName}>
+          <LogoLink href={localePath(locale)} ariaLabel={siteConfig.siteName}>
             <Image
               src="/icons/Logo.svg"
               alt="Imanu"
@@ -85,7 +85,7 @@ export function Header({ locale, content }: HeaderProps) {
               priority
               className="h-auto w-[95px] shrink-0"
             />
-          </Link>
+          </LogoLink>
 
           <nav
             className="flex items-center"
