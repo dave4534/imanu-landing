@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { SiteContent } from "@/content";
 import { aboutGridCols, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
@@ -6,6 +5,7 @@ import type { Locale } from "@/lib/i18n";
 import { localeTextProps } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 
 interface AboutSectionProps {
   content: SiteContent;
@@ -23,9 +23,8 @@ export function AboutSection({ content, locale, images }: AboutSectionProps) {
       >
         <div className="relative aspect-[672/738] w-full min-h-[280px] md:min-h-[360px]">
           <EditableImage imageKey="about" className="absolute inset-0">
-            <Image
+            <SectionMedia
               src={images.about}
-              alt=""
               fill
               className="object-cover"
               sizes="(max-width: 768px) 90vw, 45vw"

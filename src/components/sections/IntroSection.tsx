@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { SiteContent } from "@/content";
 import { bp, containerClass, introGridCols } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
@@ -6,6 +5,7 @@ import type { Locale } from "@/lib/i18n";
 import { localeCtaStackClass, localeTextProps } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 import { SocialButton } from "@/components/ui/SocialButton";
 
 interface IntroSectionProps {
@@ -72,9 +72,8 @@ export function IntroSection({ content, locale, images }: IntroSectionProps) {
         </div>
         <div className="relative min-h-[240px] w-full aspect-[658/863] md:min-h-[360px]">
           <EditableImage imageKey="intro" className="absolute inset-0">
-            <Image
+            <SectionMedia
               src={images.intro}
-              alt=""
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { SiteContent } from "@/content";
 import { bp, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
@@ -6,6 +5,7 @@ import type { Locale } from "@/lib/i18n";
 import { getDirection } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 
 interface HeroSectionProps {
   content: SiteContent;
@@ -22,9 +22,8 @@ export function HeroSection({ content, locale, images }: HeroSectionProps) {
         className={`relative w-full min-h-[50vh] aspect-[1440/863] max-h-[70vh] ${bp.md}:min-h-[55vh] ${bp.md}:max-h-[80vh] ${bp.xl}:h-[863px] ${bp.xl}:min-h-[863px] ${bp.xl}:max-h-none`}
       >
         <EditableImage imageKey="hero" className="absolute inset-0">
-          <Image
+          <SectionMedia
             src={images.hero}
-            alt=""
             fill
             priority
             className="object-cover"

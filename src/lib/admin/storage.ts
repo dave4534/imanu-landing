@@ -5,6 +5,10 @@ import {
   emptyOverrides,
   type ContentOverrides,
 } from "@/lib/admin/types";
+import {
+  mediaFilenameExtension,
+  isVideoFile,
+} from "@/lib/media";
 
 const BLOB_OVERRIDES_PATH = "imanu/content-overrides.json";
 const LOCAL_OVERRIDES_PATH = path.join(
@@ -82,18 +86,16 @@ function normalizeOverrides(raw: unknown): ContentOverrides {
   };
 }
 
-export async function saveUploadedImage(
+export async function saveUploadedMedia(
   file: File,
-  imageKey: string,
+  mediaKey: string,
 ): Promise<string> {
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const safeExt = ["jpg", "jpeg", "png", "webp", "gif"].includes(ext)
-    ? ext
-    : "jpg";
-  const filename = `${imageKey.replace(/\./g, "-")}-${Date.now()}.${safeExt}`;
+  const ext = mediaFilenameExtension(file);
+  const folder = isVideoFile(file) ? "videos" : "images";
+  const filename = `${mediaKey.replace(/\./g, "-")}-${Date.now()}.${ext}`;
 
   if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const blob = await put(`imanu/images/${filename}`, file, {
+    const blob = await put(`imanu/${folder}/${filename}`, file, {
       access: "public",
       addRandomSuffix: false,
     });
@@ -102,7 +104,7 @@ export async function saveUploadedImage(
 
   if (process.env.VERCEL) {
     throw new Error(
-      "Image uploads are not configured for production. Connect Vercel Blob storage.",
+      "Media uploads are not configured for production. Connect Vercel Blob storage.",
     );
   }
 
@@ -111,4 +113,12 @@ export async function saveUploadedImage(
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(path.join(uploadsDir, filename), buffer);
   return `/images/uploads/${filename}`;
+}
+
+/** @deprecated Use saveUploadedMedia */
+export async function saveUploadedImage(
+  file: File,
+  imageKey: string,
+): Promise<string> {
+  return saveUploadedMedia(file, imageKey);
 }

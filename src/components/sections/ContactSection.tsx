@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { SiteContent } from "@/content";
 import { contactGridCols, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
@@ -6,6 +5,7 @@ import type { Locale } from "@/lib/i18n";
 import { getDirection, localeCtaStackClass } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 import { SocialButton } from "@/components/ui/SocialButton";
 
 interface ContactSectionProps {
@@ -28,9 +28,8 @@ export function ContactSection({
       >
         <div className="relative mx-auto aspect-[538/540] w-full max-w-[538px] min-h-[280px] md:mx-0 md:max-w-none md:min-h-[360px]">
           <EditableImage imageKey="contact" className="absolute inset-0">
-            <Image
+            <SectionMedia
               src={images.contact}
-              alt=""
               fill
               className="object-cover"
               sizes="(max-width: 768px) 90vw, 45vw"

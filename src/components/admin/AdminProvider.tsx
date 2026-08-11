@@ -10,8 +10,14 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import type { Locale } from "@/lib/i18n";
-import type { ContentOverrides } from "@/lib/admin/types";
+import type { ContentOverrides, ImageKey } from "@/lib/admin/types";
+import {
+  isVideoFile,
+  mediaFilenameExtension,
+  mediaUploadError,
+} from "@/lib/media";
 import { AdminToast } from "@/components/admin/AdminToast";
 
 interface AdminContextValue {
@@ -30,6 +36,60 @@ interface AdminContextValue {
 }
 
 const AdminContext = createContext<AdminContextValue | null>(null);
+
+async function saveMediaOverride(imageKey: ImageKey, imageUrl: string) {
+  const response = await fetch("/api/admin/overrides", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageKey, imageUrl }),
+  });
+
+  let data: { error?: string } = {};
+  try {
+    data = (await response.json()) as { error?: string };
+  } catch {
+    if (!response.ok) {
+      return "Upload saved to storage but failed to update the site content.";
+    }
+  }
+
+  if (!response.ok) {
+    return data.error ?? "Upload saved to storage but failed to update the site content.";
+  }
+
+  return null;
+}
+
+async function uploadViaBlobClient(
+  imageKey: string,
+  file: File,
+): Promise<string | null | "fallback"> {
+  const ext = mediaFilenameExtension(file);
+  const folder = isVideoFile(file) ? "videos" : "images";
+  const pathname = `imanu/${folder}/${imageKey.replace(/\./g, "-")}-${Date.now()}.${ext}`;
+
+  try {
+    const blob = await upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: "/api/admin/upload",
+      clientPayload: JSON.stringify({ imageKey }),
+      multipart: file.size > 10 * 1024 * 1024,
+    });
+
+    return await saveMediaOverride(imageKey as ImageKey, blob.url);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Upload failed.";
+
+    if (
+      message.includes("Vercel Blob storage") ||
+      message.includes("Client uploads require")
+    ) {
+      return "fallback";
+    }
+
+    return message;
+  }
+}
 
 export function AdminProvider({
   locale,
@@ -174,6 +234,20 @@ export function AdminProvider({
 
   const uploadImage = useCallback(
     async (imageKey: string, file: File) => {
+      const validationError = mediaUploadError(file);
+      if (validationError) return validationError;
+
+      const preferClientUpload =
+        isVideoFile(file) || file.size > 4 * 1024 * 1024;
+
+      if (preferClientUpload) {
+        const clientError = await uploadViaBlobClient(imageKey, file);
+        if (clientError !== "fallback") {
+          if (!clientError) router.refresh();
+          return clientError;
+        }
+      }
+
       try {
         const formData = new FormData();
         formData.append("file", file);

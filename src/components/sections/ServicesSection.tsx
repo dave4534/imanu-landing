@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ServiceItem, SiteContent } from "@/content";
 import {
   containerClass,
@@ -10,6 +9,7 @@ import type { Locale } from "@/lib/i18n";
 import { localeTextProps } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
+import { SectionMedia } from "@/components/ui/SectionMedia";
 
 interface ServicesSectionProps {
   content: SiteContent;
@@ -100,9 +100,8 @@ export function ServicesSection({
                   imageKey={serviceImageKey(index)}
                   className="absolute inset-0"
                 >
-                  <Image
+                  <SectionMedia
                     src={images[serviceImageKey(index)]}
-                    alt=""
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 367px"
