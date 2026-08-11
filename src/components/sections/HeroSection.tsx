@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, belowFigmaDesktop, figmaDesktop } from "@/config/figma-layout";
+import { bp, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { getDirection } from "@/lib/i18n";
@@ -18,8 +18,9 @@ export function HeroSection({ content, locale, images }: HeroSectionProps) {
 
   return (
     <section className="relative w-full bg-section-hero">
-      {/* Single height wrapper so text stays anchored to the visible image on mobile */}
-      <div className={`relative w-full ${belowFigmaDesktop}:aspect-[1440/863] ${belowFigmaDesktop}:max-h-[70vh] ${figmaDesktop}:h-[863px]`}>
+      <div
+        className={`relative w-full ${bp.stack}:aspect-[1440/863] ${bp.stack}:max-h-[70vh] ${bp.md}:aspect-[1440/863] ${bp.md}:max-h-[80vh] ${bp.xl}:h-[863px] ${bp.xl}:max-h-none`}
+      >
         <EditableImage imageKey="hero" className="absolute inset-0">
           <Image
             src={images.hero}
@@ -32,11 +33,9 @@ export function HeroSection({ content, locale, images }: HeroSectionProps) {
         </EditableImage>
 
         <div className="pointer-events-none absolute inset-0 z-20">
-          <div
-            className={`${containerClass} relative h-full`}
-          >
+          <div className={`${containerClass} relative h-full`}>
             <div
-              className={`pointer-events-auto absolute right-4 bottom-6 w-max max-w-[calc(100%-32px)] text-right text-white sm:bottom-8 ${figmaDesktop}:right-[122px] ${figmaDesktop}:bottom-[212px] ${figmaDesktop}:min-w-[471px]`}
+              className={`pointer-events-auto absolute right-4 bottom-6 w-max max-w-[calc(100%-32px)] text-right text-white sm:bottom-8 ${bp.md}:right-[5%] ${bp.md}:bottom-[10%] ${bp.xl}:right-[122px] ${bp.xl}:bottom-[212px] ${bp.xl}:min-w-[471px]`}
               dir={dir}
               style={{
                 textShadow:
@@ -47,14 +46,14 @@ export function HeroSection({ content, locale, images }: HeroSectionProps) {
                 path="hero.title"
                 value={content.hero.title}
                 as="h1"
-                className={`text-[40px] font-normal leading-none md:text-[48px] ${figmaDesktop}:text-[100px]`}
+                className="text-[40px] font-normal leading-none sm:text-[48px] md:text-[64px] xl:text-[100px]"
                 dir={dir}
               />
               <EditableText
                 path="hero.subtitle"
                 value={content.hero.subtitle}
                 as="p"
-                className={`mt-0 text-[20px] font-normal leading-tight md:text-[24px] ${belowFigmaDesktop}:whitespace-normal ${figmaDesktop}:whitespace-nowrap ${figmaDesktop}:text-[50px]`}
+                className={`mt-0 text-[20px] font-normal leading-tight sm:text-[24px] md:text-[32px] xl:whitespace-nowrap xl:text-[50px]`}
                 dir={dir}
               />
             </div>

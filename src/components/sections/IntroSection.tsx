@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
+import { bp, containerClass, introGridCols } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { localeCtaStackClass, localeTextProps } from "@/lib/i18n";
@@ -28,16 +28,14 @@ function IntroContent({
         path="intro.title"
         value={content.intro.title}
         as="h2"
-        className="text-text-heading leading-tight"
-        style={{ fontSize: figma.intro.titleSize, lineHeight: 1.2 }}
+        className="text-text-heading leading-tight text-3xl md:text-4xl xl:text-[60px]"
         dir={textProps.dir}
       />
       <EditableText
         path="intro.subtitle"
         value={content.intro.subtitle}
         as="p"
-        className="text-text-heading"
-        style={{ fontSize: figma.intro.subtitleSize, lineHeight: 1.2 }}
+        className="mt-3 text-text-heading text-lg md:text-xl xl:text-[32px]"
         dir={textProps.dir}
         multiline
       />
@@ -61,49 +59,33 @@ function IntroContent({
 
 export function IntroSection({ content, locale, images }: IntroSectionProps) {
   const introImage = (
-    <EditableImage imageKey="intro" className="relative h-full w-full">
+    <EditableImage
+      imageKey="intro"
+      className={`relative w-full ${bp.stack}:aspect-[658/863] ${bp.stack}:max-h-[50vh] ${bp.md}:h-full ${bp.md}:min-h-[360px]`}
+    >
       <Image
         src={images.intro}
         alt=""
         fill
         className="object-cover"
-        sizes="(max-width: 1439px) 100vw, 658px"
+        sizes="(max-width: 768px) 100vw, 50vw"
       />
     </EditableImage>
   );
 
   return (
     <section className="bg-section-intro">
-      <div className={`flex flex-col ${figmaDesktop}:hidden`}>
-        <div className="relative aspect-[658/863] w-full max-h-[50vh]">
-          {introImage}
-        </div>
-        <div className="px-6 py-12">
-          <IntroContent content={content} locale={locale} />
-        </div>
-      </div>
-
       <div
-        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:grid`}
-        style={{
-          gridTemplateColumns: `${figma.intro.beigeWidth}px ${figma.intro.imageWidth}px`,
-          height: figma.intro.height,
-        }}
+        className={`${containerClass} layout-ltr grid grid-cols-1 ${introGridCols} ${bp.md}:min-h-[480px] ${bp.xl}:min-h-[863px]`}
       >
-        <div className="relative flex items-center bg-section-intro">
-          <div
-            className="w-full"
-            style={{
-              paddingInlineStart: figma.intro.textBlock.insetStart,
-              maxWidth:
-                figma.intro.textBlock.insetStart +
-                figma.intro.textBlock.width,
-            }}
-          >
+        <div
+          className={`flex items-center bg-section-intro px-6 py-12 ${bp.md}:py-16 ${bp.md}:pl-[min(14.4vw,208px)] ${bp.xl}:pl-[208px]`}
+        >
+          <div className="w-full max-w-[522px]">
             <IntroContent content={content} locale={locale} />
           </div>
         </div>
-        <div className="relative">{introImage}</div>
+        <div className="relative min-h-[240px]">{introImage}</div>
       </div>
     </section>
   );

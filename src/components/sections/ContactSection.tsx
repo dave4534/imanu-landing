@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
+import { bp, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
-import { getDirection, localeCtaStackClass, localeTextProps } from "@/lib/i18n";
+import { getDirection, localeCtaStackClass } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
 import { SocialButton } from "@/components/ui/SocialButton";
@@ -19,99 +19,52 @@ export function ContactSection({
   locale,
   images,
 }: ContactSectionProps) {
-  const textProps = localeTextProps(locale);
   const dir = getDirection(locale);
 
   const contactImage = (
-    <EditableImage imageKey="contact" className="relative h-full w-full">
+    <EditableImage
+      imageKey="contact"
+      className={`relative mx-auto w-full max-w-[538px] ${bp.stack}:aspect-square ${bp.md}:mx-0 ${bp.md}:max-w-none ${bp.md}:aspect-[538/540] ${bp.md}:h-full ${bp.md}:min-h-[320px]`}
+    >
       <Image
         src={images.contact}
         alt=""
         fill
         className="object-cover"
-        sizes="(max-width: 1439px) 90vw, 538px"
+        sizes="(max-width: 768px) 90vw, 45vw"
       />
     </EditableImage>
   );
 
-  const contactCopy = (
-    <>
-      <EditableText
-        path="contact.title"
-        value={content.contact.title}
-        as="h2"
-        className="font-semibold text-text-heading"
-        style={{ fontSize: figma.contact.titleSize }}
-        dir={dir}
-      />
-      <EditableText
-        path="contact.subtitle"
-        value={content.contact.subtitle}
-        as="p"
-        className="mt-4 text-text-heading"
-        style={{ fontSize: figma.contact.subtitleSize }}
-        dir={dir}
-        multiline
-      />
-      <EditableText
-        path="contact.body"
-        value={content.contact.body}
-        as="p"
-        className="mt-6 text-text-heading"
-        style={{ fontSize: figma.contact.bodySize }}
-        dir={dir}
-        multiline
-      />
-      <div
-        className={`mt-8 flex flex-col gap-4 ${localeCtaStackClass(locale)}`}
-      >
-        <SocialButton
-          variant="instagram"
-          label={content.contact.instagramCta}
-          editPath="contact.instagramCta"
-          locale={locale}
-        />
-        <SocialButton
-          variant="whatsapp"
-          label={content.contact.whatsappCta}
-          editPath="contact.whatsappCta"
-          locale={locale}
-        />
-      </div>
-    </>
-  );
-
   return (
     <section id="contact" className="bg-section-contact">
-      <div className={`flex flex-col gap-8 px-6 py-16 ${figmaDesktop}:hidden`}>
-        <div className="relative mx-auto aspect-square w-full max-w-[538px]">
-          {contactImage}
-        </div>
-        <div {...textProps}>
+      <div
+        className={`${containerClass} layout-ltr grid grid-cols-1 ${bp.md}:grid-cols-2 ${bp.md}:items-center gap-8 px-6 py-12 ${bp.md}:gap-12 ${bp.md}:px-10 ${bp.md}:py-16 ${bp.xl}:py-24`}
+      >
+        <div className="relative">{contactImage}</div>
+
+        <div className="text-start" dir={dir}>
           <EditableText
             path="contact.title"
             value={content.contact.title}
             as="h2"
-            className="font-semibold text-text-heading"
-            style={{ fontSize: figma.contact.titleSize * 0.8 }}
-            dir={textProps.dir}
+            className="font-semibold text-text-heading text-3xl md:text-4xl xl:text-[50px]"
+            dir={dir}
           />
           <EditableText
             path="contact.subtitle"
             value={content.contact.subtitle}
             as="p"
-            className="mt-4 text-text-heading"
-            style={{ fontSize: figma.contact.subtitleSize * 0.85 }}
-            dir={textProps.dir}
+            className="mt-4 text-text-heading text-lg md:text-xl xl:text-[32px]"
+            dir={dir}
             multiline
           />
           <EditableText
             path="contact.body"
             value={content.contact.body}
             as="p"
-            className="mt-6 text-text-heading"
-            style={{ fontSize: figma.contact.bodySize * 0.85 }}
-            dir={textProps.dir}
+            className="mt-6 text-text-heading text-lg md:text-xl xl:text-[32px]"
+            dir={dir}
             multiline
           />
           <div
@@ -130,35 +83,6 @@ export function ContactSection({
               locale={locale}
             />
           </div>
-        </div>
-      </div>
-
-      <div
-        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:block`}
-        style={{ height: figma.contact.height }}
-      >
-        <div
-          className="absolute"
-          style={{
-            left: figma.contact.image.insetStart,
-            top: figma.contact.image.insetTop,
-            width: figma.contact.image.width,
-            height: figma.contact.image.height,
-          }}
-        >
-          {contactImage}
-        </div>
-
-        <div
-          className="absolute text-start"
-          dir={dir}
-          style={{
-            left: 709,
-            top: 242,
-            width: figma.contact.textWidth,
-          }}
-        >
-          {contactCopy}
         </div>
       </div>
     </section>

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
+import { bp, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
-import { getDirection, localeTextProps } from "@/lib/i18n";
+import { localeTextProps } from "@/lib/i18n";
 import { EditableImage } from "@/components/admin/EditableImage";
 import { EditableText } from "@/components/admin/EditableText";
 
@@ -15,39 +15,38 @@ interface AboutSectionProps {
 
 export function AboutSection({ content, locale, images }: AboutSectionProps) {
   const textProps = localeTextProps(locale);
-  const dir = getDirection(locale);
 
   const aboutImage = (
-    <EditableImage imageKey="about" className="relative h-full w-full">
+    <EditableImage
+      imageKey="about"
+      className={`relative mx-auto w-full max-w-[672px] ${bp.stack}:aspect-[672/738] ${bp.md}:mx-0 ${bp.md}:max-w-none ${bp.md}:aspect-[672/738] ${bp.md}:h-full ${bp.md}:min-h-[320px]`}
+    >
       <Image
         src={images.about}
         alt=""
         fill
         className="object-cover"
-        sizes="(max-width: 1439px) 90vw, 672px"
+        sizes="(max-width: 768px) 90vw, 45vw"
       />
     </EditableImage>
   );
 
   return (
     <section id="about" className="bg-section-about">
-      <div className={`flex flex-col gap-8 px-6 py-16 ${figmaDesktop}:hidden`}>
-        <div className="relative mx-auto aspect-[672/738] w-full max-w-[672px]">
-          {aboutImage}
-        </div>
-        <div {...textProps}>
+      <div
+        className={`${containerClass} layout-ltr grid grid-cols-1 ${bp.md}:grid-cols-2 ${bp.md}:items-center gap-8 px-6 py-12 ${bp.md}:gap-10 ${bp.md}:px-10 ${bp.md}:py-16 ${bp.xl}:py-24`}
+      >
+        <div className="relative">{aboutImage}</div>
+
+        <div {...textProps} className={`${textProps.className} ${bp.md}:py-4`}>
           <EditableText
             path="about.title"
             value={content.about.title}
             as="h2"
-            className="text-text-heading leading-tight"
-            style={{ fontSize: figma.about.titleSize * 0.5 }}
+            className="text-text-heading leading-tight text-4xl md:text-5xl xl:text-[80px]"
             dir={textProps.dir}
           />
-          <div
-            className="mt-6 space-y-4 text-text-on-pink"
-            style={{ fontSize: figma.about.bodySize }}
-          >
+          <div className="mt-6 space-y-4 text-base text-text-on-pink md:text-lg xl:text-[26px]">
             {content.about.body.map((paragraph, index) => (
               <EditableText
                 key={`about-body-${index}`}
@@ -60,60 +59,6 @@ export function AboutSection({ content, locale, images }: AboutSectionProps) {
               />
             ))}
           </div>
-        </div>
-      </div>
-
-      <div
-        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:block`}
-        style={{ height: figma.about.height }}
-      >
-        <div
-          className="absolute"
-          style={{
-            left: figma.about.image.insetStart,
-            top: figma.about.image.insetTop,
-            width: figma.about.image.width,
-            height: figma.about.image.height,
-          }}
-        >
-          {aboutImage}
-        </div>
-
-        <EditableText
-          path="about.title"
-          value={content.about.title}
-          as="h2"
-          className="absolute text-start text-text-heading leading-tight"
-          dir={dir}
-          style={{
-            left: figma.about.textBlock.insetStart,
-            top: figma.about.titleInsetTop,
-            width: figma.about.textBlock.width,
-            fontSize: figma.about.titleSize,
-          }}
-        />
-
-        <div
-          className="absolute space-y-4 text-start text-text-on-pink"
-          dir={dir}
-          style={{
-            left: figma.about.textBlock.insetStart,
-            top: figma.about.bodyInsetTop,
-            width: figma.about.textBlock.width,
-            fontSize: figma.about.bodySize,
-          }}
-        >
-          {content.about.body.map((paragraph, index) => (
-            <EditableText
-              key={`about-body-desktop-${index}`}
-              path={`about.body.${index}`}
-              value={paragraph}
-              as="p"
-              className="text-text-on-pink"
-              dir={dir}
-              multiline
-            />
-          ))}
         </div>
       </div>
     </section>

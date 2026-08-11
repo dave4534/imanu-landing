@@ -77,6 +77,15 @@ export function figmaPx(value: number, viewport = figma.canvasWidth): string {
 /** Max-width container matching Figma canvas */
 export const containerClass = "mx-auto w-full max-w-[1440px]";
 
-/** Figma uses fixed px positions for a 1440px frame — only enable below that width */
-export const figmaDesktop = "min-[1440px]" as const;
-export const belowFigmaDesktop = "max-[1439px]" as const;
+/** Standard breakpoints: stack ≤768px, side-by-side ≥769px, desktop polish ≥1280px */
+export const bp = {
+  stack: "max-md",
+  md: "md",
+  xl: "xl",
+} as const;
+
+/** Intro column ratio from Figma (783 + 658) */
+export const introGridCols = "md:grid-cols-[783fr_658fr]" as const;
+
+/** Services image / card column ratio from Figma (704 + 600) */
+export const servicesGridCols = "md:grid-cols-[704fr_600fr]" as const;
