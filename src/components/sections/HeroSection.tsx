@@ -19,7 +19,7 @@ export function HeroSection({ content, locale, images }: HeroSectionProps) {
   return (
     <section className="relative w-full bg-section-hero">
       <div
-        className={`relative w-full ${bp.stack}:aspect-[1440/863] ${bp.stack}:max-h-[70vh] ${bp.md}:aspect-[1440/863] ${bp.md}:max-h-[80vh] ${bp.xl}:h-[863px] ${bp.xl}:max-h-none`}
+        className={`relative w-full min-h-[50vh] aspect-[1440/863] max-h-[70vh] ${bp.md}:min-h-[55vh] ${bp.md}:max-h-[80vh] ${bp.xl}:h-[863px] ${bp.xl}:min-h-[863px] ${bp.xl}:max-h-none`}
       >
         <EditableImage imageKey="hero" className="absolute inset-0">
           <Image
@@ -53,7 +53,7 @@ export function HeroSection({ content, locale, images }: HeroSectionProps) {
                 path="hero.subtitle"
                 value={content.hero.subtitle}
                 as="p"
-                className={`mt-0 text-[20px] font-normal leading-tight sm:text-[24px] md:text-[32px] xl:whitespace-nowrap xl:text-[50px]`}
+                className="mt-0 text-[20px] font-normal leading-tight sm:text-[24px] md:text-[32px] xl:whitespace-nowrap xl:text-[50px]"
                 dir={dir}
               />
             </div>

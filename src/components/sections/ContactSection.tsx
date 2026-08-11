@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { bp, containerClass } from "@/config/figma-layout";
+import { contactGridCols, containerClass } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { getDirection, localeCtaStackClass } from "@/lib/i18n";
@@ -21,27 +21,22 @@ export function ContactSection({
 }: ContactSectionProps) {
   const dir = getDirection(locale);
 
-  const contactImage = (
-    <EditableImage
-      imageKey="contact"
-      className={`relative mx-auto w-full max-w-[538px] ${bp.stack}:aspect-square ${bp.md}:mx-0 ${bp.md}:max-w-none ${bp.md}:aspect-[538/540] ${bp.md}:h-full ${bp.md}:min-h-[320px]`}
-    >
-      <Image
-        src={images.contact}
-        alt=""
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 90vw, 45vw"
-      />
-    </EditableImage>
-  );
-
   return (
     <section id="contact" className="bg-section-contact">
       <div
-        className={`${containerClass} layout-ltr grid grid-cols-1 ${bp.md}:grid-cols-2 ${bp.md}:items-center gap-8 px-6 py-12 ${bp.md}:gap-12 ${bp.md}:px-10 ${bp.md}:py-16 ${bp.xl}:py-24`}
+        className={`${containerClass} layout-ltr grid grid-cols-1 ${contactGridCols} md:items-center gap-8 px-6 py-12 md:gap-12 md:px-10 md:py-16 xl:py-24`}
       >
-        <div className="relative">{contactImage}</div>
+        <div className="relative mx-auto aspect-[538/540] w-full max-w-[538px] min-h-[280px] md:mx-0 md:max-w-none md:min-h-[360px]">
+          <EditableImage imageKey="contact" className="absolute inset-0">
+            <Image
+              src={images.contact}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 90vw, 45vw"
+            />
+          </EditableImage>
+        </div>
 
         <div className="text-start" dir={dir}>
           <EditableText

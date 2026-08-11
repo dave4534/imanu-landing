@@ -58,21 +58,6 @@ function IntroContent({
 }
 
 export function IntroSection({ content, locale, images }: IntroSectionProps) {
-  const introImage = (
-    <EditableImage
-      imageKey="intro"
-      className={`relative w-full ${bp.stack}:aspect-[658/863] ${bp.stack}:max-h-[50vh] ${bp.md}:h-full ${bp.md}:min-h-[360px]`}
-    >
-      <Image
-        src={images.intro}
-        alt=""
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, 50vw"
-      />
-    </EditableImage>
-  );
-
   return (
     <section className="bg-section-intro">
       <div
@@ -85,7 +70,17 @@ export function IntroSection({ content, locale, images }: IntroSectionProps) {
             <IntroContent content={content} locale={locale} />
           </div>
         </div>
-        <div className="relative min-h-[240px]">{introImage}</div>
+        <div className="relative min-h-[240px] w-full aspect-[658/863] md:min-h-[360px]">
+          <EditableImage imageKey="intro" className="absolute inset-0">
+            <Image
+              src={images.intro}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </EditableImage>
+        </div>
       </div>
     </section>
   );

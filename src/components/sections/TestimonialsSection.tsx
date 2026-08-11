@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { SiteContent } from "@/content";
 import { bp, containerClass } from "@/config/figma-layout";
 import type { Locale } from "@/lib/i18n";
-import { localeTextProps } from "@/lib/i18n";
+import { getDirection } from "@/lib/i18n";
 import { EditableText } from "@/components/admin/EditableText";
 
 interface TestimonialsSectionProps {
@@ -14,7 +14,7 @@ export function TestimonialsSection({
   content,
   locale,
 }: TestimonialsSectionProps) {
-  const textProps = localeTextProps(locale);
+  const dir = getDirection(locale);
 
   return (
     <section className="bg-section-testimonials py-12 md:py-16 xl:py-20">
@@ -29,8 +29,8 @@ export function TestimonialsSection({
           className="h-auto w-[140px] md:w-[202px]"
         />
         <div
-          {...textProps}
-          className={`w-full max-w-[891px] space-y-8 text-text-heading md:space-y-10 xl:space-y-[42px] ${textProps.className}`}
+          dir={dir}
+          className="w-full max-w-[891px] space-y-8 text-center text-text-heading md:space-y-10 xl:space-y-[42px]"
         >
           {content.testimonials.items.map((quote, index) => (
             <EditableText
@@ -39,7 +39,7 @@ export function TestimonialsSection({
               value={quote}
               as="blockquote"
               className="text-lg leading-normal text-text-heading md:text-xl xl:text-[26px]"
-              dir={textProps.dir}
+              dir={dir}
               multiline
             />
           ))}

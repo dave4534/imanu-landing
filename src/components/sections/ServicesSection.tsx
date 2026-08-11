@@ -1,6 +1,10 @@
 import Image from "next/image";
 import type { ServiceItem, SiteContent } from "@/content";
-import { bp, containerClass, servicesGridCols } from "@/config/figma-layout";
+import {
+  containerClass,
+  serviceImageMaxHeightClass,
+  servicesGridCols,
+} from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { localeTextProps } from "@/lib/i18n";
@@ -81,26 +85,32 @@ export function ServicesSection({
   return (
     <section id="services" className="bg-section-services">
       <div
-        className={`${containerClass} layout-ltr flex flex-col gap-12 px-6 py-12 ${bp.md}:gap-16 ${bp.md}:px-10 ${bp.md}:py-16`}
+        className={`${containerClass} layout-ltr flex flex-col gap-12 px-6 py-12 md:gap-16 md:px-10 md:py-16`}
       >
         {content.services.items.map((item, index) => (
           <article
             key={item.id}
-            className={`grid grid-cols-1 ${servicesGridCols} ${bp.md}:items-stretch ${bp.md}:gap-0`}
+            className={`grid grid-cols-1 ${servicesGridCols} md:items-center md:gap-0`}
           >
-            <EditableImage
-              imageKey={serviceImageKey(index)}
-              className={`relative w-full ${bp.stack}:aspect-[704/768] ${bp.stack}:max-h-[55vh] ${bp.md}:aspect-auto ${bp.md}:min-h-[360px]`}
-            >
-              <Image
-                src={images[serviceImageKey(index)]}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </EditableImage>
-            <div className={`relative z-10 ${bp.md}:-ml-6 ${bp.xl}:-ml-10`}>
+            <div className="flex w-full items-center justify-center">
+              <div
+                className={`relative aspect-[704/768] w-full min-h-[240px] ${serviceImageMaxHeightClass}`}
+              >
+                <EditableImage
+                  imageKey={serviceImageKey(index)}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={images[serviceImageKey(index)]}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 367px"
+                  />
+                </EditableImage>
+              </div>
+            </div>
+            <div className="relative z-10 md:-ml-6 xl:-ml-10">
               <ServiceCard item={item} locale={locale} index={index} />
             </div>
           </article>

@@ -87,5 +87,14 @@ export const bp = {
 /** Intro column ratio from Figma (783 + 658) */
 export const introGridCols = "md:grid-cols-[783fr_658fr]" as const;
 
+/** About Me column ratio from Figma (672 + 458) */
+export const aboutGridCols = "md:grid-cols-[672fr_458fr]" as const;
+
 /** Services image / card column ratio from Figma (704 + 600) */
 export const servicesGridCols = "md:grid-cols-[704fr_600fr]" as const;
+
+/** Contact column ratio from Figma (538 + 475) */
+export const contactGridCols = "md:grid-cols-[538fr_475fr]" as const;
+
+/** Max rendered height for offering photos */
+export const serviceImageMaxHeightClass = "max-h-[400px]" as const;
