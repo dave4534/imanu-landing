@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma } from "@/config/figma-layout";
+import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { localeCtaStackClass, localeTextProps } from "@/lib/i18n";
@@ -67,14 +67,14 @@ export function IntroSection({ content, locale, images }: IntroSectionProps) {
         alt=""
         fill
         className="object-cover"
-        sizes="(max-width: 1024px) 100vw, 658px"
+        sizes="(max-width: 1439px) 100vw, 658px"
       />
     </EditableImage>
   );
 
   return (
     <section className="bg-section-intro">
-      <div className="flex flex-col lg:hidden">
+      <div className={`flex flex-col ${figmaDesktop}:hidden`}>
         <div className="relative aspect-[658/863] w-full max-h-[50vh]">
           {introImage}
         </div>
@@ -84,7 +84,7 @@ export function IntroSection({ content, locale, images }: IntroSectionProps) {
       </div>
 
       <div
-        className={`${containerClass} layout-ltr relative hidden lg:grid`}
+        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:grid`}
         style={{
           gridTemplateColumns: `${figma.intro.beigeWidth}px ${figma.intro.imageWidth}px`,
           height: figma.intro.height,

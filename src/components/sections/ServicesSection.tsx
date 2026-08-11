@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { ServiceItem, SiteContent } from "@/content";
-import { containerClass, figma } from "@/config/figma-layout";
+import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { localeTextProps } from "@/lib/i18n";
@@ -40,7 +40,7 @@ function ServiceCard({
   return (
     <div
       dir={textProps.dir}
-      className={`${cardBg} ${textProps.className} flex flex-col justify-center px-8 lg:px-[137px]`}
+      className={`${cardBg} ${textProps.className} flex flex-col justify-center px-8 ${figmaDesktop}:px-[137px]`}
       style={{ minHeight, paddingTop: 63, paddingBottom: 63 }}
     >
       <EditableText
@@ -52,7 +52,7 @@ function ServiceCard({
         dir={textProps.dir}
       />
       <div
-        className="mt-6 space-y-4 text-text-heading lg:mt-[50px]"
+        className={`mt-6 space-y-4 text-text-heading ${figmaDesktop}:mt-[50px]`}
         style={{
           fontSize: figma.services.bodySize,
           maxWidth: figma.services.bodyWidth,
@@ -91,7 +91,7 @@ export function ServicesSection({
 }: ServicesSectionProps) {
   return (
     <section id="services" className="bg-section-services">
-      <div className="flex flex-col gap-12 px-6 py-16 lg:hidden">
+      <div className={`flex flex-col gap-12 px-6 py-16 ${figmaDesktop}:hidden`}>
         {content.services.items.map((item, index) => (
           <article key={item.id} className="flex flex-col">
             <EditableImage
@@ -118,7 +118,7 @@ export function ServicesSection({
       </div>
 
       <div
-        className={`${containerClass} layout-ltr relative hidden lg:block`}
+        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:block`}
         style={{ height: figma.services.sectionHeight }}
       >
         {content.services.items.map((item, index) => {

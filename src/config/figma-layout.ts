@@ -76,3 +76,7 @@ export function figmaPx(value: number, viewport = figma.canvasWidth): string {
 
 /** Max-width container matching Figma canvas */
 export const containerClass = "mx-auto w-full max-w-[1440px]";
+
+/** Figma uses fixed px positions for a 1440px frame — only enable below that width */
+export const figmaDesktop = "min-[1440px]" as const;
+export const belowFigmaDesktop = "max-[1439px]" as const;

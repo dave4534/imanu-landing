@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma } from "@/config/figma-layout";
+import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
 import type { Locale } from "@/lib/i18n";
 import { getDirection, localeTextProps } from "@/lib/i18n";
 import { EditableText } from "@/components/admin/EditableText";
@@ -18,8 +18,8 @@ export function TestimonialsSection({
   const dir = getDirection(locale);
 
   return (
-    <section className="bg-section-testimonials py-12 lg:py-0">
-      <div className="flex flex-col items-center gap-10 px-6 py-16 lg:hidden">
+    <section className={`bg-section-testimonials py-12 ${figmaDesktop}:py-0`}>
+      <div className={`flex flex-col items-center gap-10 px-6 py-16 ${figmaDesktop}:hidden`}>
         <Image
           src="/icons/wine-glass.svg"
           alt=""
@@ -47,7 +47,7 @@ export function TestimonialsSection({
       </div>
 
       <div
-        className={`${containerClass} hidden lg:flex lg:flex-col lg:items-center lg:px-10`}
+        className={`${containerClass} hidden ${figmaDesktop}:flex ${figmaDesktop}:flex-col ${figmaDesktop}:items-center ${figmaDesktop}:px-10`}
         style={{
           minHeight: figma.testimonials.height,
           paddingTop: 38,

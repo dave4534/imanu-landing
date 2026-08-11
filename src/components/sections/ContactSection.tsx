@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma } from "@/config/figma-layout";
+import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { getDirection, localeCtaStackClass, localeTextProps } from "@/lib/i18n";
@@ -29,7 +29,7 @@ export function ContactSection({
         alt=""
         fill
         className="object-cover"
-        sizes="(max-width: 1024px) 90vw, 538px"
+        sizes="(max-width: 1439px) 90vw, 538px"
       />
     </EditableImage>
   );
@@ -83,7 +83,7 @@ export function ContactSection({
 
   return (
     <section id="contact" className="bg-section-contact">
-      <div className="flex flex-col gap-8 px-6 py-16 lg:hidden">
+      <div className={`flex flex-col gap-8 px-6 py-16 ${figmaDesktop}:hidden`}>
         <div className="relative mx-auto aspect-square w-full max-w-[538px]">
           {contactImage}
         </div>
@@ -134,7 +134,7 @@ export function ContactSection({
       </div>
 
       <div
-        className={`${containerClass} layout-ltr relative hidden lg:block`}
+        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:block`}
         style={{ height: figma.contact.height }}
       >
         <div

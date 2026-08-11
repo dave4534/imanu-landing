@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { SiteContent } from "@/content";
-import { containerClass, figma } from "@/config/figma-layout";
+import { containerClass, figma, figmaDesktop } from "@/config/figma-layout";
 import type { ImageKey } from "@/lib/admin/types";
 import type { Locale } from "@/lib/i18n";
 import { getDirection, localeTextProps } from "@/lib/i18n";
@@ -24,14 +24,14 @@ export function AboutSection({ content, locale, images }: AboutSectionProps) {
         alt=""
         fill
         className="object-cover"
-        sizes="(max-width: 1024px) 90vw, 672px"
+        sizes="(max-width: 1439px) 90vw, 672px"
       />
     </EditableImage>
   );
 
   return (
     <section id="about" className="bg-section-about">
-      <div className="flex flex-col gap-8 px-6 py-16 lg:hidden">
+      <div className={`flex flex-col gap-8 px-6 py-16 ${figmaDesktop}:hidden`}>
         <div className="relative mx-auto aspect-[672/738] w-full max-w-[672px]">
           {aboutImage}
         </div>
@@ -64,7 +64,7 @@ export function AboutSection({ content, locale, images }: AboutSectionProps) {
       </div>
 
       <div
-        className={`${containerClass} layout-ltr relative hidden lg:block`}
+        className={`${containerClass} layout-ltr relative hidden ${figmaDesktop}:block`}
         style={{ height: figma.about.height }}
       >
         <div
